@@ -1,0 +1,21 @@
+
+
+.form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+input{
+
+    margin: 0 0 1em 0 ;
+
+}
+
+span{
+
+    color: firebrick;
+    margin:  0 0 1em 0;
+}
