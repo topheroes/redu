@@ -1,39 +1,60 @@
 import React, {useState, useReducer} from 'react';
 import ReactDOM from 'react-dom';
 
+import produce from "immer";
+import {useImmerReducer} from "use-immer";
 
 import {login} from './util';
 
-function reducer(state, action){
+function reducer(draft, action){
     switch(action.type){
         case 'login':
             {
-                return {...state, isLoggedIn: true, errorText: ""};
+                
+                draft.isLoggedIn = true;
+                draft.errorText = '';
+                return;
+                
+                //return {...state, isLoggedIn: true, errorText: ""};
             }
         case 'error':
             {
-                return {...state, errorText: "Incorrect username or password", password: ""};
+                draft.errorText = "Incorrect username or password";
+                draft.password = '';
+                return;
+                //return {...state, errorText: "Incorrect username or password", password: ""};
             }
         case 'disabled':
             {
-                return {...state, isDisabled: action.off };
+                draft.isDisabled = action.off;
+                return;
+                //return {...state, isDisabled: action.off };
 
             }   
         case 'logout':
             {
-                return {...state, isLoggedIn: false};
+                draft.isLoggedIn = false;
+                return;
+                //return {...state, isLoggedIn: false};
             }
-        case 'setName':
+        case 'setField':
             {
-                return {...state, userLogin: action.field}
+                draft[action.fieldName] = action.field ;
+                return;
+                //return {...state, [action.fieldName] : action.field }
+            }
 
-            }
-        case 'setPass':{
-            return {...state, password: action.field}
-            }
+        // case 'setName':
+        //     {
+        //         return {...state, userLogin: action.field}
+
+        //     }
+        // case 'setPass':{
+        //     return {...state, password: action.field}
+        //     }
 
         default: 
-            return state;
+            return draft;
     }
 
 
@@ -61,8 +82,9 @@ function App(props){
         errorText: ""
     }
 
+    //const curriedFunction = produce(reducer);
 
-    const [state, dispatch] = useReducer(reducer, initialState);
+    const [state, dispatch] = useImmerReducer(reducer, initialState);
 
 
     
@@ -107,8 +129,8 @@ function App(props){
             <form className="form" onSubmit={(e)=>{doLogin(e)}}>
                 <p> Login details:</p>
                 <span>{errorText}</span>
-                <input type="text" placeholder="username" onChange={(event)=>{ dispatch({type: 'setName', field: event.currentTarget.value})   }} value={userLogin} />
-                <input type="password" placeholder="password" autoComplete="new-password" onChange={(event)=>{ dispatch({type: 'setPass', field: event.currentTarget.value}) }} value={password}/>
+                <input type="text" placeholder="username" onChange={(event)=>{ dispatch({type: 'setField', fieldName: 'userLogin', field: event.currentTarget.value})   }} value={userLogin} />
+                <input type="password" placeholder="password" autoComplete="new-password" onChange={(event)=>{ dispatch({type: 'setField', fieldName: 'password', field: event.currentTarget.value}) }} value={password}/>
                 <button type="submit" disabled={isDisabled}>Login</button>
         
 
