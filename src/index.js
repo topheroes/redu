@@ -1,10 +1,11 @@
-import React, {useState, useReducer} from 'react';
+import React, {useState, useReducer, useContext} from 'react';
 import ReactDOM from 'react-dom';
 
 import produce from "immer";
 import {useImmerReducer} from "use-immer";
 
 import {login} from './util';
+import { isContext } from 'vm';
 
 function reducer(draft, action){
     switch(action.type){
@@ -60,6 +61,31 @@ function reducer(draft, action){
 
 
 }
+
+
+const dispatchContext = React.createContext({});
+
+
+
+function  Button(props){
+
+    const dispatch = useContext(dispatchContext)
+
+    return <button onClick={(e)=>{dispatch({type:'login'})}}>Click me</button>
+
+}
+
+function CheckBoxForm(props) {
+    return (
+        <>
+        <span> here is some text </span>
+        <input type="text" placeholder="what value to add" />
+        <Button/>
+        </>
+    )
+
+}
+
 
 
 
@@ -123,21 +149,30 @@ function App(props){
     }
 
     return (
-        <div>
-            { isLoggedIn ? <><h1>Hello {userLogin} </h1> <button onClick={(e)=>{dispatch( {type:'logout'} ) } }>Logout</button></> : 
-
-            <form className="form" onSubmit={(e)=>{doLogin(e)}}>
-                <p> Login details:</p>
-                <span>{errorText}</span>
-                <input type="text" placeholder="username" onChange={(event)=>{ dispatch({type: 'setField', fieldName: 'userLogin', field: event.currentTarget.value})   }} value={userLogin} />
-                <input type="password" placeholder="password" autoComplete="new-password" onChange={(event)=>{ dispatch({type: 'setField', fieldName: 'password', field: event.currentTarget.value}) }} value={password}/>
-                <button type="submit" disabled={isDisabled}>Login</button>
         
+        <dispatchContext.Provider value={state, dispatch} >
+            
+            <>
 
-            </form>
-            }
-        </div>
+                <div>
+                
+                    { isLoggedIn ? <><h1>Hello {userLogin} </h1> <button onClick={(e)=>{dispatch( {type:'logout'} ) } }>Logout</button></> : 
 
+                    <form className="form" onSubmit={(e)=>{doLogin(e)}}>
+                        <p> Login details:</p>
+                        <span>{errorText}</span>
+                        <input type="text" placeholder="username" onChange={(event)=>{ dispatch({type: 'setField', fieldName: 'userLogin', field: event.currentTarget.value})   }} value={userLogin} />
+                        <input type="password" placeholder="password" autoComplete="new-password" onChange={(event)=>{ dispatch({type: 'setField', fieldName: 'password', field: event.currentTarget.value}) }} value={password}/>
+                        <button type="submit" disabled={isDisabled}>Login</button>
+                                
+
+                    </form>
+                    }
+                    
+                </div>
+                <CheckBoxForm/>
+            </>
+        </dispatchContext.Provider>
 
     );
 
