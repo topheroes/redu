@@ -5,7 +5,7 @@ import produce from "immer";
 import {useImmerReducer} from "use-immer";
 
 import {login} from './util';
-import { isContext } from 'vm';
+
 
 function reducer(draft, action){
     switch(action.type){
@@ -150,7 +150,7 @@ function App(props){
 
     return (
         
-        <dispatchContext.Provider value={state, dispatch} >
+        <dispatchContext.Provider value={dispatch} >
             
             <>
 
